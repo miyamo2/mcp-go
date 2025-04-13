@@ -211,6 +211,7 @@ func (c *StdioMCPClient) sendRequest(
 	}
 
 	responseChan := make(chan RPCResponse, 1)
+	defer close(responseChan)
 	c.mu.Lock()
 	c.responses[id] = responseChan
 	c.mu.Unlock()
