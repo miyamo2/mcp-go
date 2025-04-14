@@ -211,7 +211,6 @@ func (c *StdioMCPClient) sendRequest(
 	}
 
 	responseChan := make(chan RPCResponse, 1)
-	defer close(responseChan)
 	c.mu.Lock()
 	c.responses[id] = responseChan
 	c.mu.Unlock()
@@ -229,6 +228,7 @@ func (c *StdioMCPClient) sendRequest(
 	select {
 	case <-ctx.Done():
 		c.mu.Lock()
+		close(responseChan)
 		delete(c.responses, id)
 		c.mu.Unlock()
 		return nil, ctx.Err()
